@@ -95,3 +95,14 @@ For away games, plus-minus appears more relevant, suggesting that overall team p
    """
 )
 
+st.subheader("Key Takeaways")
+st.markdown(
+    """
+Shooting more efficiently than opponents is strongly linked to winning, especially in away games
+
+Ball movement (assists) and shot quality appear to be key drivers of efficiency
+
+Momentum-related metrics play a larger role in away performance
+
+Multivariate analysis shows that many simple correlations weaken once other factors are controlled for, highlighting the importance of proper statistical modelling"""
+)
