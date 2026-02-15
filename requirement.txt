@@ -1,0 +1,11 @@
+streamlit
+plotly
+pandas
+numpy
+streamlit
+plotly>=5.18.0
+pandas
+numpy
+statsmodels
+scipy
+altair
