@@ -1,14 +1,18 @@
 import streamlit as st
-import sqlite3
-import pandas as pd
-import plotly.express as px
-import altair as alt
 from src.plots import win_home_away, shot_efficiency, correlation
+from src.shot_efficiency import linear_reg
 
 #page config
 st.set_page_config(page_title="GSW Dashboard", layout="wide")
 
 st.title("GSW 2022 Analysis")
+
+st.markdown(
+    """
+This exploratory data analysis (EDA) examines how shooting efficiency influenced game outcomes for the 2022 Golden State Warriors, with a focus on differences between home and away performance.
+
+The objective is to identify key drivers of shot efficiency and understand how efficiency translates into winning games."""
+)
 
 st.subheader("Performance during the regular season")
 
@@ -53,3 +57,41 @@ with corr_col1:
     st.plotly_chart(correlation()[0], use_container_width=True)
 with corr_col2:
     st.plotly_chart(correlation()[1], use_container_width=True)
+
+st.markdown(
+    """
+    Correlation analysis provides initial insight into the variables associated with shot efficiency. One notable pattern is that momentum-related variables, such as largest lead, appear to play a stronger role in away games than in home games.
+
+Shot selection also seems relevant: fast break opportunities are typically associated with higher conversion rates than three-point attempts. Additionally, higher assist numbers suggest better ball movement, which likely leads to more open and higher-quality shots.
+
+However, correlations do not account for the joint influence of multiple covariates. To address this limitation, a multivariate linear regression is estimated. By the Frisch–Waugh–Lovell (FWL) theorem, the coefficients can be interpreted as the partial effect of each variable after controlling for the others.
+    """
+)
+
+results_home, results_away = linear_reg()
+
+reg_col1, reg_col2 = st.columns(2)
+with reg_col1:
+    st.subheader("Home games")
+    st.markdown(f"""```
+{results_home.summary().as_text()}
+```""", unsafe_allow_html=False)
+with reg_col2:
+    st.subheader("Away games")
+    st.markdown(f"""```
+{results_away.summary().as_text()}
+```""", unsafe_allow_html=False)
+    
+st.markdown(
+    """
+When controlling for other covariates, many of the previously observed correlations lose statistical significance, suggesting that bivariate relationships may be driven by confounding factors.
+
+For home games, one interesting relationship is the positive association between opponent points in the paint and GSW shot efficiency. One possible interpretation is that when opponents focus on interior scoring, they may be slower to reset defensively, allowing the Warriors to generate higher-quality offensive possessions.
+
+The model explains a large proportion of the variation in shot efficiency (high R²), although the extremely small eigenvalues indicate potential multicollinearity, so coefficient estimates should be interpreted with caution. 
+
+
+For away games, plus-minus appears more relevant, suggesting that overall team performance and game momentum play a larger role in shooting efficiency on the road. This is consistent with the idea that away environments amplify the importance of momentum and in-game performance dynamics.
+   """
+)
+
