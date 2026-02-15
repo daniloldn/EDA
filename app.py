@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 import plotly.express as px
 import altair as alt
-from src.plots import win_home_away, shot_efficiency
+from src.plots import win_home_away, shot_efficiency, correlation
 
 #page config
 st.set_page_config(page_title="GSW Dashboard", layout="wide")
@@ -39,3 +39,17 @@ From the data, when the Warriors shoot more efficiently than their opponent, the
 
 This suggests that relative shooting efficiency is a key determinant of game outcomes. Therefore, to better understand what drives winning performance, the next step is to analyse the factors that contribute to shot efficiency."""
 )
+
+
+st.subheader("The determinants of shot efficiency")
+
+st.markdown(
+    """
+A natural next step is to look at the correlations of the the covarites with shot effiency"""
+)
+
+corr_col1, corr_col2 = st.columns(2)
+with corr_col1:
+    st.plotly_chart(correlation()[0], use_container_width=True)
+with corr_col2:
+    st.plotly_chart(correlation()[1], use_container_width=True)

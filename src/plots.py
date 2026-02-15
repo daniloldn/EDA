@@ -135,3 +135,79 @@ def shot_efficiency() -> List[go.Figure]:
 
     fig2.update_layout(title="GSW (Away) vs Home Shooting", xaxis_title="GSW FG%", yaxis_title="Other team FG%")
     return [fig, fig2, home_win_pct_shot_better,home_win_pct_shot_worse, away_win_pct_shot_better, away_win_pct_shot_worse]
+
+def correlation():
+
+    # Base data for both views
+    df = pd.read_csv("data/clean_data/clean.csv")
+    gsw_home = df[df["team_abbreviation_home"] == "GSW"].copy()
+    gsw_home = gsw_home.select_dtypes(include="number")
+    
+    #dropping columns and correlation
+    gsw_home = gsw_home.drop(
+    columns=["min", "home", "win", "video_available_home", "video_available_away", "pts_home", 
+    "fgm_home", "fg3_pct_home", "fg3m_home"],
+    errors="ignore",
+    )
+
+    #fig 1
+    target = "fg_pct_home"
+
+
+    corr_with_target = (
+    gsw_home.corr(numeric_only=True)[target]
+    .drop(target)
+    .sort_values(key=lambda s: s.abs(), ascending=False)
+    )
+
+    top_n = 15
+    corr_top = corr_with_target.head(top_n).reset_index()
+    corr_top.columns = ["feature", "corr"]
+
+    fig1 = px.bar(
+    corr_top,
+    x="corr",
+    y="feature",
+    orientation="h",
+    title=f"Top {top_n} correlations with {target}",
+    )
+    fig1.update_layout(template="plotly_dark")
+
+
+    #away plot 
+    gsw_away = df[df["team_abbreviation_home"] != "GSW"].copy()
+
+    gsw_away = gsw_away.select_dtypes(include="number")
+    
+    #dropping columns and correlation
+    gsw_away = gsw_away.drop(
+    columns=["min", "home", "win", "video_available_home", "video_available_away", "pts_away", 
+    "fgm_away", "fg3_pct_away", "fg3m_away"],
+    errors="ignore",
+    )
+
+    #fig 1
+    target = "fg_pct_away"
+
+
+    corr_with_target_away = (
+    gsw_away.corr(numeric_only=True)[target]
+    .drop(target)
+    .sort_values(key=lambda s: s.abs(), ascending=False)
+    )
+
+    top_n = 15
+    corr_top_away = corr_with_target_away.head(top_n).reset_index()
+    corr_top_away.columns = ["feature", "corr"]
+
+    fig2 = px.bar(
+    corr_top_away,
+    x="corr",
+    y="feature",
+    orientation="h",
+    title=f"Top {top_n} correlations with {target}",
+    )
+    fig2.update_layout(template="plotly_dark")
+    return [fig1, fig2]
+
+
