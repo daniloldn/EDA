@@ -24,6 +24,4 @@ This project is an exploratory data analysis of the 2021-22 Golden State Warrior
 - data/ – Clean CSV inputs (not tracked here beyond sample paths).
 - eda.ipynb – Notebook used during exploratory work (not required to run the app).
 
-## Next Steps
-- Tighten the regression helper (e.g., ensure away models use away predictors) and surface coefficients visually.
-- Add data provenance notes and automate refreshing clean.csv / clean_others.csv.
+
